@@ -5,10 +5,10 @@ cmake_minimum_required(VERSION 3.0)
 # └──────────────────────────────────────────────────────────────────┘
 
 # find the Qt root directory
-if(NOT Qt5Core_DIR)
-  find_package(Qt5Core REQUIRED)
+if(NOT Qt6Core_DIR)
+  find_package(Qt6Core REQUIRED)
 endif()
-get_filename_component(QT_STATIC_QT_ROOT "${Qt5Core_DIR}/../../.." ABSOLUTE)
+get_filename_component(QT_STATIC_QT_ROOT "${Qt6Core_DIR}/../../.." ABSOLUTE)
 message(STATUS "Found Qt SDK Root: ${QT_STATIC_QT_ROOT}")
 
 set(QT_STATIC_SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR})
@@ -350,11 +350,11 @@ macro(qt_generate_plugin_import TARGET)
     "// File will be overwrite at each CMake run.\n"
     "\n#include <QtPlugin>\n")
 
-  # Get all available Qt5 module
+  # Get all available Qt6 module
   file(GLOB QT_STATIC_AVAILABLES_QT_DIRECTORIES
     LIST_DIRECTORIES true
     RELATIVE ${QT_STATIC_QT_ROOT}/lib/cmake
-    ${QT_STATIC_QT_ROOT}/lib/cmake/Qt5*)
+    ${QT_STATIC_QT_ROOT}/lib/cmake/Qt6*)
   foreach(DIR ${QT_STATIC_AVAILABLES_QT_DIRECTORIES})
     set(DIR_PRESENT ${${DIR}_DIR})
     if(DIR_PRESENT)
@@ -365,7 +365,7 @@ macro(qt_generate_plugin_import TARGET)
         file(APPEND ${QT_STATIC_PLUGIN_SRC_FILE} "\n// ${DIR}\n")
         # Parse Plugin to append to the list only if unique
         foreach(PLUGIN ${DIR_PLUGIN_CONTENT})
-          # List form is Qt5::NameOfPlugin, we just need NameOfPlugin
+          # List form is Qt6::NameOfPlugin, we just need NameOfPlugin
           string(REGEX MATCH ".*\\:\\:(.*)" PLUGIN_MATCH ${PLUGIN})
           set(PLUGIN_NAME ${CMAKE_MATCH_1})
           # Should be NameOfPlugin
@@ -377,7 +377,7 @@ macro(qt_generate_plugin_import TARGET)
               list(APPEND QT_STATIC_DEPENDENCIES_PLUGINS ${PLUGIN_NAME})
               file(APPEND ${QT_STATIC_PLUGIN_SRC_FILE} "Q_IMPORT_PLUGIN(${PLUGIN_NAME});\n")
 
-              set(PLUGIN_LIBRARY Qt5::${PLUGIN_NAME})
+              set(PLUGIN_LIBRARY Qt6::${PLUGIN_NAME})
               if(QT_STATIC_VERBOSE)
                 message(STATUS "Force link to qml plugin ${PLUGIN_LIBRARY}")
               endif()
